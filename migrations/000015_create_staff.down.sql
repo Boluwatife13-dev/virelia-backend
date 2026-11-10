@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS invites;
+DROP TABLE IF EXISTS staff;

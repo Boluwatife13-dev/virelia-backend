@@ -1,2 +1,0 @@
-package referral_inbox
-
