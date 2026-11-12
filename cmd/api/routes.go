@@ -14,6 +14,7 @@ import (
 	"virelia/internal/platform/config"
 	mw "virelia/internal/platform/middleware"
 	"virelia/internal/staff"
+	"virelia/web"
 )
 
 // setupRoutes connects every URL, grouped by
@@ -61,7 +62,7 @@ func setupRoutes(
 	keys.Routes(api, s.keys, login, platformAdmin)
 
 	// A page to try security keys in the browser.
-	router.StaticFile("/key-test", "./web/key-test.html")
+	router.GET("/key-test", func(c *gin.Context) { c.Data(200, "text/html; charset=utf-8", web.KeyTest) })
 }
 
 // health shows whether the app and database are up.
