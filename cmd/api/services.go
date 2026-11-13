@@ -5,6 +5,7 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 
+	"virelia/internal/audit"
 	"virelia/internal/auth"
 	"virelia/internal/facilities"
 	"virelia/internal/guardians"
@@ -16,7 +17,6 @@ import (
 	"virelia/internal/staff"
 )
 
-// services holds one of each module, ready to use.
 type services struct {
 	auth       *auth.Service
 	staff      *staff.Service
@@ -24,6 +24,7 @@ type services struct {
 	patients   *patients.Service
 	guardians  *guardians.Service
 	keys       *keys.Service
+	audit      *audit.Service
 }
 
 func buildServices(
@@ -70,8 +71,6 @@ func buildServices(
 		authService,
 	)
 
-	// The browser page's address must be listed,
-	// or the key login is refused.
 	origins := append(
 		cfg.FrontendURLs,
 		"http://localhost:"+cfg.Port,
@@ -94,5 +93,6 @@ func buildServices(
 		patients:   patientService,
 		guardians:  guardianService,
 		keys:       keyService,
+		audit:      audit.NewService(audit.NewRepository(db)),
 	}
 }

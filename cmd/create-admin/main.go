@@ -1,9 +1,3 @@
-// create-admin makes a platform admin. Run it on the server:
-//
-//	go run ./cmd/create-admin -email you@example.com \
-//	  -phone +2348030000000 -first Ade -last Jamiu
-//
-// It then asks for a password.
 package main
 
 import (

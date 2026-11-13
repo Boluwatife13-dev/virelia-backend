@@ -8,7 +8,6 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
-// CreateInvite saves an invite that lasts 72 hours.
 func (r *Repository) CreateInvite(
 	ctx context.Context,
 	in Invite,
@@ -51,8 +50,6 @@ const acceptQuery = `
     FROM u, i
     RETURNING facility_id, role, first_name, last_name`
 
-// Accept uses an invite once and creates the user and
-// staff member, in one statement so nothing is half done.
 func (r *Repository) Accept(
 	ctx context.Context,
 	tokenHash, phone, passwordHash string,

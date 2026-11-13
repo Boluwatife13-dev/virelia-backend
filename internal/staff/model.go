@@ -11,9 +11,6 @@ type Member struct {
 	Specialty *string `json:"specialty"`
 }
 
-// Invite is both the hospital admin's request and
-// what gets saved. FacilityID and InvitedBy come from
-// the admin's login, never from the request body.
 type Invite struct {
 	Email     string `json:"email" binding:"required,email"`
 	FirstName string `json:"first_name" binding:"required,max=100"`

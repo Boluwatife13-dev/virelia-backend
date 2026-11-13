@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgxpool"
 
+	"virelia/internal/audit"
 	"virelia/internal/auth"
 	"virelia/internal/facilities"
 	"virelia/internal/guardians"
@@ -17,8 +18,6 @@ import (
 	"virelia/web"
 )
 
-// setupRoutes connects every URL, grouped by
-// who is allowed to use it.
 func setupRoutes(
 	router *gin.Engine,
 	db *pgxpool.Pool,
@@ -39,33 +38,28 @@ func setupRoutes(
 	frontDesk := mw.RequireRole(auth.RoleFrontDesk)
 	patient := mw.RequireRole(auth.RolePatient)
 
-	// Sign up, log in, passwords.
 	auth.Routes(api, s.auth, login)
 
-	// Patients manage their children.
 	guardians.PatientRoutes(api, s.guardians, login, patient)
 
-	// Hospital admins manage their own staff.
-	// Accepting an invite is open to everyone.
 	staff.Routes(api, s.staff, login, hospitalAdmin)
 
-	// Front desk registers and finds walk-in patients.
 	patients.Routes(api, s.patients, login, frontDesk)
 	guardians.Routes(api, s.guardians, login, frontDesk)
 
-	// Platform admins review hospitals and reset
-	// hospital admins' 2FA. Applying is open to everyone.
 	facilities.Routes(api, s.facilities, login, platformAdmin)
 	staff.PlatformRoutes(api, s.staff, login, platformAdmin)
 
-	// Platform admins add and use security keys.
 	keys.Routes(api, s.keys, login, platformAdmin)
+	audit.PatientRoutes(api, s.audit, login, patient)
+	audit.HospitalRoutes(api, s.audit, login, hospitalAdmin)
+	audit.PlatformRoutes(api, s.audit, login, platformAdmin)
 
-	// A page to try security keys in the browser.
-	router.GET("/key-test", func(c *gin.Context) { c.Data(200, "text/html; charset=utf-8", web.KeyTest) })
+	router.GET("/key-test", func(c *gin.Context) {
+		c.Data(200, "text/html; charset=utf-8", web.KeyTest)
+	})
 }
 
-// health shows whether the app and database are up.
 func health(db *pgxpool.Pool) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		status := "ok"
