@@ -31,6 +31,8 @@ func setupRoutes(
 
 	api.Use(mw.RateLimit(60, time.Minute))
 
+	api.Use(audit.Middleware(s.audit))
+
 	login := mw.RequireLogin(cfg.JWTSecret)
 
 	hospitalAdmin := mw.RequireRole(auth.RoleHospitalAdmin)
@@ -51,6 +53,7 @@ func setupRoutes(
 	staff.PlatformRoutes(api, s.staff, login, platformAdmin)
 
 	keys.Routes(api, s.keys, login, platformAdmin)
+
 	audit.PatientRoutes(api, s.audit, login, patient)
 	audit.HospitalRoutes(api, s.audit, login, hospitalAdmin)
 	audit.PlatformRoutes(api, s.audit, login, platformAdmin)
