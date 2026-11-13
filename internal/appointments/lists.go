@@ -30,7 +30,6 @@ func collect(rows pgx.Rows) ([]Appointment, error) {
 	return pgx.CollectRows(rows, pgx.RowToStructByPos[Appointment])
 }
 
-
 func (r *Repository) forPatientUser(
 	ctx context.Context,
 	userID string,
@@ -42,7 +41,6 @@ func (r *Repository) forPatientUser(
 
 	return collect(rows)
 }
-
 
 func (r *Repository) onDay(
 	ctx context.Context,

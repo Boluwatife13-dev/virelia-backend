@@ -16,6 +16,7 @@ import (
 	"virelia/internal/patients"
 	"virelia/internal/platform/config"
 	mw "virelia/internal/platform/middleware"
+	"virelia/internal/records"
 	"virelia/internal/staff"
 	"virelia/web"
 )
@@ -63,7 +64,8 @@ func setupRoutes(
 	appointments.PatientRoutes(api, s.appointments, login, patient)
 	appointments.DeskRoutes(api, s.appointments, login, frontDesk)
 	appointments.DoctorRoutes(api, s.appointments, login, doctor)
-
+	records.PatientRoutes(api, s.records, login, patient)
+	records.DoctorRoutes(api, s.records, s.audit, login, doctor)
 	audit.PatientRoutes(api, s.audit, login, patient)
 	audit.HospitalRoutes(api, s.audit, login, hospitalAdmin)
 	audit.PlatformRoutes(api, s.audit, login, platformAdmin)

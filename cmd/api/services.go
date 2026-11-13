@@ -16,6 +16,7 @@ import (
 	"virelia/internal/patients"
 	"virelia/internal/platform/config"
 	"virelia/internal/platform/crypt"
+	"virelia/internal/records"
 	"virelia/internal/staff"
 )
 
@@ -29,6 +30,7 @@ type services struct {
 	audit        *audit.Service
 	directory    *directory.Service
 	appointments *appointments.Service
+	records      *records.Service
 }
 
 func buildServices(
@@ -104,6 +106,9 @@ func buildServices(
 
 		appointments: appointments.NewService(
 			appointments.NewRepository(db),
+		),
+		records: records.NewService(
+			records.NewRepository(db),
 		),
 	}
 }
