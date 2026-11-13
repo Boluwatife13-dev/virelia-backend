@@ -5,8 +5,10 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 
+	"virelia/internal/appointments"
 	"virelia/internal/audit"
 	"virelia/internal/auth"
+	"virelia/internal/directory"
 	"virelia/internal/facilities"
 	"virelia/internal/guardians"
 	"virelia/internal/keys"
@@ -18,13 +20,15 @@ import (
 )
 
 type services struct {
-	auth       *auth.Service
-	staff      *staff.Service
-	facilities *facilities.Service
-	patients   *patients.Service
-	guardians  *guardians.Service
-	keys       *keys.Service
-	audit      *audit.Service
+	auth         *auth.Service
+	staff        *staff.Service
+	facilities   *facilities.Service
+	patients     *patients.Service
+	guardians    *guardians.Service
+	keys         *keys.Service
+	audit        *audit.Service
+	directory    *directory.Service
+	appointments *appointments.Service
 }
 
 func buildServices(
@@ -94,5 +98,12 @@ func buildServices(
 		guardians:  guardianService,
 		keys:       keyService,
 		audit:      audit.NewService(audit.NewRepository(db)),
+		directory: directory.NewService(
+			directory.NewRepository(db),
+		),
+
+		appointments: appointments.NewService(
+			appointments.NewRepository(db),
+		),
 	}
 }

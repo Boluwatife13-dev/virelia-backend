@@ -6,8 +6,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgxpool"
 
+	"virelia/internal/appointments"
 	"virelia/internal/audit"
 	"virelia/internal/auth"
+	"virelia/internal/directory"
 	"virelia/internal/facilities"
 	"virelia/internal/guardians"
 	"virelia/internal/keys"
@@ -39,6 +41,7 @@ func setupRoutes(
 	platformAdmin := mw.RequireRole(auth.RolePlatformAdmin)
 	frontDesk := mw.RequireRole(auth.RoleFrontDesk)
 	patient := mw.RequireRole(auth.RolePatient)
+	doctor := mw.RequireRole(auth.RoleDoctor)
 
 	auth.Routes(api, s.auth, login)
 
@@ -53,6 +56,13 @@ func setupRoutes(
 	staff.PlatformRoutes(api, s.staff, login, platformAdmin)
 
 	keys.Routes(api, s.keys, login, platformAdmin)
+
+	directory.Routes(api, s.directory, login, doctor)
+
+	appointments.PublicRoutes(api, s.appointments)
+	appointments.PatientRoutes(api, s.appointments, login, patient)
+	appointments.DeskRoutes(api, s.appointments, login, frontDesk)
+	appointments.DoctorRoutes(api, s.appointments, login, doctor)
 
 	audit.PatientRoutes(api, s.audit, login, patient)
 	audit.HospitalRoutes(api, s.audit, login, hospitalAdmin)
