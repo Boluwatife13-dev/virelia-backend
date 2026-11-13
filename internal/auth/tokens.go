@@ -90,7 +90,11 @@ func (s *Service) issueTokens(
 
 	t := RefreshToken{UserID: userID, FamilyID: family}
 
-	err = s.repo.SaveRefreshToken(ctx, t, hashToken(refresh), agent, ip)
+	expires := time.Now().Add(idleLimit(role.Name))
+
+	err = s.repo.SaveRefreshToken(
+		ctx, t, hashToken(refresh), agent, ip, expires,
+	)
 
 	return &TokenPair{access, refresh}, err
 }

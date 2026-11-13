@@ -3,17 +3,21 @@ package auth
 import (
 	"context"
 	"errors"
+	"time"
 )
 
 func (r *Repository) SaveRefreshToken(
-	ctx context.Context, t RefreshToken, hash, agent, ip string,
+	ctx context.Context,
+	t RefreshToken,
+	hash, agent, ip string,
+	expiresAt time.Time,
 ) error {
 	_, err := r.db.Exec(ctx, `
 		INSERT INTO refresh_tokens (user_id, family_id,
 		  token_hash, user_agent, ip_address, expires_at)
-		  		VALUES ($1, COALESCE(NULLIF($2, '')::uuid, gen_random_uuid()),
-		  $3, $4, $5, now() + interval '30 days')`,
-		t.UserID, t.FamilyID, hash, agent, ip,
+		VALUES ($1, COALESCE(NULLIF($2, '')::uuid, gen_random_uuid()),
+		  $3, $4, $5, $6)`,
+		t.UserID, t.FamilyID, hash, agent, ip, expiresAt,
 	)
 
 	return err
